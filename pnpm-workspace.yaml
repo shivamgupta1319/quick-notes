@@ -1,0 +1,4 @@
+# Makes this directory its own pnpm root, so it installs with its own lockfile whether it sits
+# inside the Delivery OS monorepo (templates/crud-saas) or is the root of a generated repo.
+packages:
+  - '.'
