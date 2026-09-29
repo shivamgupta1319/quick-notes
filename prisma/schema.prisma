@@ -25,6 +25,51 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   sessions     Session[]
+  notes        Note[]
+}
+
+model Note {
+  id             String     @id @default(cuid())
+  title          String
+  body           String?
+  color          String
+  isArchived     Boolean    @default(false)
+  isTitleBold    Boolean    @default(false)
+  isBodyBulleted Boolean    @default(false)
+  bodyTextColor  String?
+  positionX      Float      @default(0)
+  positionY      Float      @default(0)
+  userId         String
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags           Tag[]
+  reminders      Reminder[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([userId])
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String
+  noteId    String
+  note      Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([noteId])
+}
+
+model Reminder {
+  id           String   @id @default(cuid())
+  reminderTime DateTime
+  isNotified   Boolean  @default(false)
+  noteId       String
+  note         Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([noteId])
 }
 
 /// A signed-in browser. The cookie holds a random token; only its SHA-256 hash is stored.
