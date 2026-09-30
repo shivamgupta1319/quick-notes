@@ -10,6 +10,8 @@ const newNote = {
   title: 'My First Note',
   body: 'Body text here',
   color: '#ffeb3b',
+  isTitleBold: true,
+  isBodyBulleted: true,
   tags: ['work', 'urgent'],
   reminders: ['2026-10-01T12:00:00.000Z'],
 };
@@ -32,6 +34,8 @@ describe('Notes API', () => {
       title: 'My First Note',
       body: 'Body text here',
       color: '#ffeb3b',
+      isTitleBold: true,
+      isBodyBulleted: true,
       tags: expect.any(Array),
       reminders: expect.any(Array),
     });
@@ -60,7 +64,13 @@ describe('Notes API', () => {
     const updateRes = await PUT(
       await request(`/api/notes/${note.id}`, {
         method: 'PUT',
-        body: { ...newNote, title: 'Updated Title', isArchived: true },
+        body: {
+          ...newNote,
+          title: 'Updated Title',
+          isArchived: true,
+          isTitleBold: false,
+          isBodyBulleted: false,
+        },
         user,
       }),
       ctx,
@@ -69,6 +79,8 @@ describe('Notes API', () => {
     const updated = await updateRes.json();
     expect(updated.note.title).toBe('Updated Title');
     expect(updated.note.isArchived).toBe(true);
+    expect(updated.note.isTitleBold).toBe(false);
+    expect(updated.note.isBodyBulleted).toBe(false);
 
     const deleteRes = await DELETE(
       await request(`/api/notes/${note.id}`, { method: 'DELETE', user }),
@@ -89,5 +101,32 @@ describe('Notes API', () => {
       params({ id: '99999' }),
     );
     expect(updateRes.status).toBe(404);
+  });
+
+  it('archives a note and excludes it from active list', async () => {
+    const user = await createUser();
+    const createRes = await create(
+      await request('/api/notes', { method: 'POST', body: newNote, user }),
+      params({}),
+    );
+    const { note } = await createRes.json();
+    // Archive the note
+    const archiveRes = await PUT(
+      await request(`/api/notes/${note.id}`, {
+        method: 'PUT',
+        body: { ...newNote, isArchived: true },
+        user,
+      }),
+      params({ id: note.id }),
+    );
+    expect(archiveRes.status).toBe(200);
+    const archived = await archiveRes.json();
+    expect(archived.note.isArchived).toBe(true);
+    // List active notes - should exclude archived note
+    const listRes = await list(await request('/api/notes', { user }), params({}));
+    expect(listRes.status).toBe(200);
+    const pageData = await listRes.json();
+    expect(pageData.total).toBe(0);
+    expect(pageData.items).toHaveLength(0);
   });
 });
