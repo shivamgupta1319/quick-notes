@@ -77,4 +77,17 @@ describe('Notes API', () => {
     expect(deleteRes.status).toBe(204);
     expect(await db().note.findUnique({ where: { id: note.id } })).toBeNull();
   });
+
+  it('fails to update non-existent note with 404', async () => {
+    const user = await createUser();
+    const updateRes = await PUT(
+      await request('/api/notes/99999', {
+        method: 'PUT',
+        body: { ...newNote, title: 'Updated Title' },
+        user,
+      }),
+      params({ id: '99999' }),
+    );
+    expect(updateRes.status).toBe(404);
+  });
 });
