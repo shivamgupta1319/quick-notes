@@ -110,7 +110,7 @@ export function NoteCard({ note }: { note: NoteDto }) {
         <div className="flex items-center gap-1">
           <Dialog open={isEditing} onOpenChange={setIsEditing}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="Edit">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                 ✎
               </Button>
             </DialogTrigger>
@@ -143,7 +143,6 @@ export function NoteCard({ note }: { note: NoteDto }) {
             className="h-8 w-8 p-0 text-destructive"
             onClick={handleDelete}
             title="Delete"
-            aria-label="Delete"
           >
             ✕
           </Button>

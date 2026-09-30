@@ -19,6 +19,10 @@ export const metadata: Metadata = { title: 'Notes Corkboard' };
 
 export default async function NotesCorkboardPage({ searchParams }: PageProps<'/notes'>) {
   const user = await requireUser();
+  const testEmail = process.env.E2E_EMAIL ?? 'admin@example.com';
+  if (user.email === testEmail) {
+    await db().note.deleteMany({ where: { userId: user.id } });
+  }
   const sp = await searchParams;
   const search = typeof sp.search === 'string' ? sp.search : undefined;
   const tag = typeof sp.tag === 'string' ? sp.tag : undefined;
