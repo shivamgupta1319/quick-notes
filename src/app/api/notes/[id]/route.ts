@@ -24,6 +24,39 @@ export const GET = withUser<Ctx>(async (_req, { params, user }) => {
 });
 
 /** Update an existing note's content, formatting, position, color, or archive state. */
+export const PATCH = withUser<Ctx>(async (req, { params, user }) => {
+  const { id } = await params;
+  const body = await parseBody(req, CreateNoteBody.partial());
+  const { tags, reminders, ...data } = body;
+  await findNoteOr404(id, user.id);
+
+  const note = await db().note.update({
+    where: { id },
+    data: {
+      ...data,
+      tags:
+        tags !== undefined
+          ? {
+              deleteMany: {},
+              create: tags.map((name) => ({ name: name.trim().toLowerCase() })),
+            }
+          : undefined,
+      reminders:
+        reminders !== undefined
+          ? {
+              deleteMany: {},
+              create: reminders.map((reminderTime) => ({
+                reminderTime: new Date(reminderTime),
+              })),
+            }
+          : undefined,
+    },
+    select: NOTE_SELECT,
+  });
+
+  return NextResponse.json({ note });
+});
+
 export const PUT = withUser<Ctx>(async (req, { params, user }) => {
   const { id } = await params;
   const { tags, reminders, ...data } = await parseBody(req, CreateNoteBody);
