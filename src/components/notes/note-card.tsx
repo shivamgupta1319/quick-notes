@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -169,11 +169,26 @@ export function NoteCard({ note }: { note: NoteDto }) {
         </div>
       )}
 
-      {note.reminders && note.reminders.length > 0 && note.reminders[0]?.reminderTime && (
-        <div className="text-xs text-muted-foreground">
-          Reminder: {new Date(note.reminders[0].reminderTime).toLocaleString()}
-        </div>
-      )}
+      {note.reminders &&
+        note.reminders.length > 0 &&
+        note.reminders[0]?.reminderTime &&
+        (() => {
+          const reminderTime = new Date(note.reminders[0].reminderTime);
+          const isOverdue = reminderTime.getTime() <= Date.now();
+          if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission().catch(() => {});
+          }
+          if ('Notification' in window && Notification.permission === 'granted' && isOverdue) {
+            new Notification('Reminder Due', { body: note.title });
+          }
+          return (
+            <div
+              className={`text-xs px-2 py-1 rounded border ${isOverdue ? 'border-destructive text-destructive bg-destructive/10 font-medium' : 'text-muted-foreground border-transparent'}`}
+            >
+              ⏰ Reminder: {reminderTime.toLocaleString()}
+            </div>
+          );
+        })()}
     </section>
   );
 }
