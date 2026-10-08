@@ -38,7 +38,11 @@ export const PATCH = withUser<Ctx>(async (req, { params, user }) => {
         tags !== undefined
           ? {
               deleteMany: {},
-              create: tags.map((name) => ({ name: name.trim().toLowerCase() })),
+              create: Array.from(new Set(tags.map((tag) => tag.trim().toLowerCase()))).map(
+                (name) => ({
+                  name,
+                }),
+              ),
             }
           : undefined,
       reminders:
@@ -70,7 +74,11 @@ export const PUT = withUser<Ctx>(async (req, { params, user }) => {
         tags !== undefined
           ? {
               deleteMany: {},
-              create: tags.map((name) => ({ name: name.trim().toLowerCase() })),
+              create: Array.from(new Set(tags.map((tag) => tag.trim().toLowerCase()))).map(
+                (name) => ({
+                  name,
+                }),
+              ),
             }
           : undefined,
       reminders:
