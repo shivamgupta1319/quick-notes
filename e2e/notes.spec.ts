@@ -14,7 +14,7 @@ test('US-002: create a note with title, body, tags, reminders and formatting opt
   await page.getByPlaceholder('work, personal, urgent').fill('work, urgent');
   await page.getByRole('button', { name: 'Create Note' }).click();
   await expect(page.getByText(uniqueTitle)).toBeVisible();
-  await expect(page.getByText('work')).toBeVisible();
+  await expect(page.locator('section', { hasText: uniqueTitle }).getByText('work')).toBeVisible();
 });
 
 test('US-003: edit an existing note title, body and formatting', async ({ page }) => {
@@ -29,10 +29,14 @@ test('US-003: edit an existing note title, body and formatting', async ({ page }
 
   await page
     .locator('section', { hasText: uniqueTitle })
-    .getByRole('button', { name: '✎' })
+    .locator('button')
+    .filter({ hasText: '✎' })
     .click();
   const updatedTitle = `${uniqueTitle} Updated`;
-  await page.getByRole('textbox', { name: 'Title' }).fill(updatedTitle);
+  await page
+    .locator('div[role="dialog"] input, div[role="dialog"] textbox')
+    .first()
+    .fill(updatedTitle);
   await page.getByRole('button', { name: 'Save Changes' }).click();
   await expect(page.getByText(updatedTitle)).toBeVisible();
 });
@@ -49,8 +53,10 @@ test('US-004: delete a note from the board', async ({ page }) => {
 
   await page
     .locator('section', { hasText: uniqueTitle })
-    .getByRole('button', { name: '✕' })
+    .locator('button')
+    .filter({ hasText: '✕' })
     .click();
+  await page.waitForLoadState('networkidle');
   await expect(page.getByText(uniqueTitle)).not.toBeVisible();
 });
 
@@ -66,8 +72,10 @@ test('US-014: archive a note and view in archive', async ({ page }) => {
 
   await page
     .locator('section', { hasText: uniqueTitle })
-    .getByRole('button', { name: '📥' })
+    .locator('button')
+    .filter({ hasText: '📥' })
     .click();
+  await page.waitForLoadState('networkidle');
   await expect(page.getByText(uniqueTitle)).not.toBeVisible();
 
   await page.goto('/notes/archive');
