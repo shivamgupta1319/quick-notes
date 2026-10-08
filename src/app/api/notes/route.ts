@@ -18,7 +18,7 @@ export const GET = withUser(async (req, { user }) => {
     userId: user.id,
     ...(isArchivedParam !== null
       ? { isArchived: isArchivedParam === 'true' || isArchivedParam === '1' }
-      : {}),
+      : { isArchived: false }),
     ...(search
       ? {
           OR: [
