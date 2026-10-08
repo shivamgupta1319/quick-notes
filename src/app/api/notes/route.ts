@@ -61,7 +61,13 @@ export const POST = withUser(async (req, { user }) => {
       userId: user.id,
       tags:
         tags && tags.length > 0
-          ? { create: tags.map((name) => ({ name: name.trim().toLowerCase() })) }
+          ? {
+              create: Array.from(new Set(tags.map((tag) => tag.trim().toLowerCase()))).map(
+                (name) => ({
+                  name,
+                }),
+              ),
+            }
           : undefined,
       reminders:
         reminders && reminders.length > 0
