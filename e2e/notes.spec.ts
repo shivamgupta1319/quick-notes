@@ -26,17 +26,12 @@ test('US-003: edit an existing note title, body and formatting', async ({ page }
   await page.getByLabel('Body').fill('Original body');
   await page.getByRole('button', { name: 'Create Note' }).click();
   await expect(page.getByText(uniqueTitle)).toBeVisible();
+  await page.waitForSelector('div[role="dialog"]', { state: 'hidden' }).catch(() => {});
 
-  await page
-    .locator('section', { hasText: uniqueTitle })
-    .locator('button')
-    .filter({ hasText: '✎' })
-    .click();
+  const card = page.locator('section', { hasText: uniqueTitle });
+  await card.getByText('✎').click();
   const updatedTitle = `${uniqueTitle} Updated`;
-  await page
-    .locator('div[role="dialog"] input, div[role="dialog"] textbox')
-    .first()
-    .fill(updatedTitle);
+  await page.getByRole('textbox', { name: 'Title' }).fill(updatedTitle);
   await page.getByRole('button', { name: 'Save Changes' }).click();
   await expect(page.getByText(updatedTitle)).toBeVisible();
 });
@@ -50,12 +45,10 @@ test('US-004: delete a note from the board', async ({ page }) => {
   await page.getByLabel('Body').fill('To be deleted');
   await page.getByRole('button', { name: 'Create Note' }).click();
   await expect(page.getByText(uniqueTitle)).toBeVisible();
+  await page.waitForSelector('div[role="dialog"]', { state: 'hidden' }).catch(() => {});
 
-  await page
-    .locator('section', { hasText: uniqueTitle })
-    .locator('button')
-    .filter({ hasText: '✕' })
-    .click();
+  const card = page.locator('section', { hasText: uniqueTitle });
+  await card.getByText('✕').click();
   await page.waitForLoadState('networkidle');
   await expect(page.getByText(uniqueTitle)).not.toBeVisible();
 });
@@ -69,12 +62,10 @@ test('US-014: archive a note and view in archive', async ({ page }) => {
   await page.getByLabel('Body').fill('To be archived');
   await page.getByRole('button', { name: 'Create Note' }).click();
   await expect(page.getByText(uniqueTitle)).toBeVisible();
+  await page.waitForSelector('div[role="dialog"]', { state: 'hidden' }).catch(() => {});
 
-  await page
-    .locator('section', { hasText: uniqueTitle })
-    .locator('button')
-    .filter({ hasText: '📥' })
-    .click();
+  const card = page.locator('section', { hasText: uniqueTitle });
+  await card.getByText('📥').click();
   await page.waitForLoadState('networkidle');
   await expect(page.getByText(uniqueTitle)).not.toBeVisible();
 
