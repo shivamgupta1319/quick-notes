@@ -66,7 +66,7 @@ export default async function NotesCorkboardPage({ searchParams }: PageProps<'/n
                   + New Note
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto z-60">
                 <DialogHeader>
                   <DialogTitle>Create New Sticky Note</DialogTitle>
                 </DialogHeader>
@@ -80,7 +80,7 @@ export default async function NotesCorkboardPage({ searchParams }: PageProps<'/n
         }
       />
 
-      <div className="relative flex-1 min-h-[600px] rounded-xl border-2 border-dashed border-amber-900/20 bg-amber-50/50 p-6 overflow-hidden">
+      <div className="relative flex-1 min-h-[600px] rounded-xl border-2 border-dashed border-amber-900/20 bg-amber-50/50 bg-[url('data:image/svg+xml;utf8,<svg xmlns%3D%22http://www.w3.org/2000/svg%22 width%3D%2240%22 height%3D%2240%22><rect width%3D%2240%22 height%3D%2240%22 fill%3D%22%23fef3c7%22/%3E<path d%3D%22M0%2C20 L40%2C20 M20%2C0 L20%2C40%22 stroke%3D%22%23d97706%22 stroke-width%3D%221%22/%3E</svg>')] p-6 overflow-hidden">
         {notes.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center gap-3">
             <div className="text-5xl">📌</div>
