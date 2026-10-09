@@ -92,7 +92,7 @@ export function NoteCard({ note }: { note: NoteDto }) {
         backgroundColor: note.color,
         left: `${position.x}px`,
         top: `${position.y}px`,
-        zIndex: isDragging ? 50 : 10,
+        zIndex: isDragging ? 70 : 60,
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -114,7 +114,7 @@ export function NoteCard({ note }: { note: NoteDto }) {
                 ✎
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto z-60">
               <DialogHeader>
                 <DialogTitle>Edit Note</DialogTitle>
               </DialogHeader>
